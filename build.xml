@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SmartNet" default="full">
+
+	<!-- Carrega o arquivo de propriedades -->
+	<property file="${basedir}/build.properties" /> 
+
+	<!-- Cria os diretorios necessarios para o build -->
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}/lib" />
+		<path id="lib.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</path>
+	</target>
+
+	<!-- Apaga os diretorios do build -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="full" depends="clean, init, jar, obfuscate">
+	</target>
+
+	<!-- Target que compila as classes -->
+	<target name="compile" depends="init">
+		<javac includeantruntime="false" nowarn="on" srcdir="${src.dir}" includes="**" destdir="${build.dir}" deprecation="true" optimize="true" debug="true" encoding="ISO-8859-1">
+			<classpath refid="lib.classpath" />
+		    <compilerarg value="-XDignore.symbol.file" />
+		</javac>
+	</target>
+
+	<target name="version_file">
+		<propertyfile file="${version.file}" comment="Build version info">
+			<entry key="version" type="string" value="${version}" />
+		</propertyfile>
+	</target>
+
+	<target name="make_binary">
+		<java classname="br.com.wps.smartnetutils.resource.VersionMaker" fork="true" failonerror="yes">
+			<classpath refid="lib.classpath" />
+			<arg value="${appname}"/>
+			<arg value="true"/>
+		</java>
+	</target>
+
+	<target name="load_version">
+		<loadproperties>
+			<file file="${src.dir}/properties/${appname}.VERSION"/>
+		</loadproperties>
+	</target>
+	
+	<!-- Target que cria o jar da aplicacao -->
+	<target name="jar" depends="compile, make_binary, load_version">
+		<tstamp>
+		  <format property="today" pattern="yyyy-MM-dd HH:mm:ss:sss zzz"/>
+		</tstamp>
+		<copy todir="${dist.dir}/properties" file="${src.dir}/properties/${appname}.BIN" overwrite="true"/>
+		<copy todir="${dist.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<jar destfile="${dist.dir}/${jar.prefix}-temp.jar" duplicate="preserve">
+			<fileset dir="${build.dir}">
+				<include name="**/*.*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/*.ini"/>
+				<exclude name="**/*.key"/>
+				<exclude name="**/*.crt"/>
+			</fileset>
+			<manifest>
+				<attribute name="Created-By" value="${vendor}" />
+				<attribute name="Built-By" value="${developer}" />
+				<attribute name="Last-modified" value="${today}" />
+				<attribute name="Specification-Title" value="${title.valid.key}" />
+				<attribute name="Specification-Version" value="${app.version.base}.${app.version.feature}.${app.version.bugfix}" />
+				<attribute name="Specification-Vendor" value="${vendor}" />
+			</manifest>
+		</jar>
+		<echo file="${dist.dir}/readme.txt" append="false" >
+Componente: ${jar.prefix}.${app.version.base}.${app.version.feature}.${app.version.bugfix}.jar${line.separator}
+Data: ${today}${line.separator}
+Classpath: ${jar.classpath}${line.separator}
+${line.separator}
+Descrição: ${title}${line.separator}
+		</echo>
+	</target>
+	
+	<target name="obfuscate" depends="jar">  
+
+		<!-- MAKE OBFUSCATED JAR -->
+	    <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${yguard.lib.dir}/yguard.jar"/>
+		
+		<yguard>
+	
+		  	<inoutpair 
+		    	in="${dist.dir}/${jar.prefix}-temp.jar"
+		    	out="${dist.dir}/${jar.prefix}.${app.version.base}.${app.version.feature}.${app.version.bugfix}.jar"/>
+
+		    <externalclasses refid="lib.classpath"/>
+			
+		    <rename logfile="${obfuscationLog}" replaceClassNameStrings="true">  
+			    <property name="obfuscation-prefix" value="wpsobsf"/>  
+		        <property name="error-checking" value="pedantic"/>
+		        <adjust replaceName="true">
+		          <include name="**/*.properties"/>
+		        </adjust>
+		        <keep>
+					<class classes="public" methods="public" fields="public"/>
+					<class classes="protected" methods="protected" fields="protected"/>
+		            <method name="Object readObject()" />
+		            <method name="void writeObject(Object)" />
+		            <method name="void readObject(java.io.ObjectInputStream)" />
+		            <method name="void writeObject(java.io.ObjectOutputStream)" />
+		            <field name="serialVersionUID"/>
+		        </keep>
+		    </rename>  
+
+		</yguard>
+		
+		<delete>
+		    <fileset dir="${dist.dir}" includes="${jar.prefix}-temp.jar"/>
+		</delete>
+		
+	</target>
+	
+</project>

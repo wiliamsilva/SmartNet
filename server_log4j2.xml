@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="OFF">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout>
+	      <Pattern>%-5p [%d{HH:mm:ss,SSS}] [%c{1}] %msg%n%throwable{1}</Pattern>
+      </PatternLayout>
+    </Console>
+	<RollingFile name="DailyFile" fileName="c:/tracert-smartnet/server-smartnet.log"
+			filePattern="c:/tracert-smartnet/server-smartnet-%d{yyyy-MM-dd}-%i.log">
+		<PatternLayout>
+			<Pattern>%-5p [%d{HH:mm:ss,SSS}] [%c{1}] %msg%n%throwable{1}</Pattern>
+		</PatternLayout>
+		<Policies>
+			<TimeBasedTriggeringPolicy />
+			<SizeBasedTriggeringPolicy size="2 MB"/>
+		</Policies>
+		<DefaultRolloverStrategy max="2000"/>
+	</RollingFile>
+  </Appenders>
+  <Loggers>
+  	<!-- Configuração do log do DNPark -->
+    <Logger name="br.com.wps.smartnet" level="TRACE" additivity="false">
+ 		<AppenderRef ref="Console"/>
+ 		<AppenderRef ref="DailyFile"/>
+    </Logger>
+    <root level="OFF">
+        <AppenderRef ref="Console"/>
+ 		<AppenderRef ref="DailyFile"/>
+    </root> 
+  </Loggers>
+</Configuration>

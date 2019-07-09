@@ -1,0 +1,15 @@
+#
+#Tue Jun 18 09:20:12 BRT 2019
+app.build.second=12
+app.build.day=18
+app.build.mounth=6
+app.build.hour=9
+app.build.minute=20
+app.manufacturer=WPS
+app.autor=Wiliam Silva
+app.version.base=2
+app.build.year=2019
+app.description=Framework de alto desempenho e alta produtividade para comunica\u00E7\u00E3o socket TCP/IP
+app.version.bugfix=1
+app.name=SmartNet
+app.version.feature=1

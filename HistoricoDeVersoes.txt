@@ -1,0 +1,27 @@
+1.0.0 - 31/05/2017 - Wiliam Silva:
+- Versão inicial
+1.0.1 - 19/06/2017 - Wiliam Silva:
+- alternada a classe SenderFromServer para lanÃ§ar erro de envio.
+2.0.0 - 05/11/2017 - Wiliam Silva:
+- corrigido log de mensagem enviada no Multiplexer para utilizar uma cópia da mensagem em modo thread-safe;
+- adicionada conexão SmartClient para realizar uma ou mais conexÃµes no modo contigÃªncia ou balanceado;
+- removidas classes que fazem parte do SmartNetUtils;
+- alteradas as classes Session e SSLSession para conterem referÃªncias para a classe de configuração correspondente;
+- alteradas as classes Sender e SSLSender para usarem a configuração a partir da sessão;
+- alteradas as classes Message e SSLMessage para realizar cópia de conteúdos de objetos;
+- removida a classe MessageWithWrap e SSLMessageWithWrap;
+- adicionados métodos abstratos wrap e unwrap na classe Message e SSLMessage;
+- alterados todos os métodos de envio para sempre chamar wrap;
+- alterados métodos de chamada para evento de recebimento e evento de envio para execução do unwrap;
+- corrigida a atualização de número de conexão em SSLBasicSocket para o método close;
+- adiciona exceção no método wrap de Message e SSLMessage;
+- adiciona exceção no método unwrap de Message e SSLMessage.
+2.0.1 - 19/02/2017 - Wiliam Silva:
+- melhorias no controle de mensagens enviadas e controle de conexÃµes.
+2.0.2 - 26/02/2018 - Wiliam Silva:
+- melhorada a classe SmartBuffer para remover a limitação por tamanho máximo porque o buffer é dinâmico e volta ao tamanho mínimo.
+- atualização do yGuard (2.6) para correções disponíveis ao Java 8.
+2.1.0 - 20/05/2019 - Wiliam Silva:
+- atualizada a biblioteca smart-net-utils.2.2.4.jar.
+2.1.1 - 18/06/2019 - Wiliam Silva:
+- alteradas as classes Accepter e SSLAccepter para ativar keep alive de uma nova conexão quando este parâmetro estiver ligado na configuraçao do objeto server socket.
